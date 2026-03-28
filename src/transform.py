@@ -1,82 +1,46 @@
 import pandas as pd
+import logging
 from db_connection import get_connection
 
-def transform_data(students, scores, attendance):
+# ✅ Logging setup (industry standard)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
+# ---------------------- TRANSFORM ---------------------- #
+def transform_data(students, scores, attendance, total_days=180):
     """
-    Merge students, scores, and attendance tables,
-    calculate average marks and attendance percentage,
-    assign performance category.
+    Merge datasets, compute metrics, and assign performance categories.
     """
+    try:
+        logging.info("🔄 Transforming data...")
 
-    # Merge tables
-    df = (
-        students
-        .merge(scores, on="student_id")
-        .merge(attendance, on="student_id")
-    )
-
-    # Average marks from scores
-    df['average_marks'] = df[['G1', 'G2', 'G3']].mean(axis=1)
-
-    # Calculate attendance percentage
-    TOTAL_DAYS = 180  # adjust if different
-    df['attendance_percentage'] = ((TOTAL_DAYS - df['absences']) / TOTAL_DAYS) * 100
-
-    # Performance category based on average marks
-    def performance(avg):
-        if avg >= 90:
-            return "Excellent"
-        elif avg >= 75:
-            return "Good"
-        else:
-            return "Needs Improvement"
-
-    df['performance'] = df['average_marks'].apply(performance)
-
-    return df
-
-
-
-def load_data(df):
-    """
-    Load transformed data into performance_summary table.
-    """
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    # 🧹 Step 1: Clear existing data (VERY IMPORTANT)
-    cursor.execute("TRUNCATE TABLE performance_summary")
-
-    # 💾 Step 2: Insert fresh data
-    for _, row in df.iterrows():
-        cursor.execute(
-            """
-            INSERT INTO performance_summary 
-            (student_id, average_marks, attendance_percentage, performance)
-            VALUES (%s, %s, %s, %s)
-            """,
-            (
-                row['student_id'],
-                row['average_marks'],
-                row['attendance_percentage'],
-                row['performance']
-            )
+        # Merge datasets
+        df = (
+            students
+            .merge(scores, on="student_id")
+            .merge(attendance, on="student_id")
         )
 
-    conn.commit()
-    conn.close()
+        # Average marks (vectorized)
+        df['average_marks'] = df[['G1', 'G2', 'G3']].mean(axis=1)
 
+        # Attendance percentage
+        df['attendance_percentage'] = (
+            (total_days - df['absences']) / total_days
+        ) * 100
 
-def extract_data():
-    """
-    Extract data from students, scores, and attendance tables.
-    """
-    conn = get_connection()
+        # Performance category (vectorized - faster than apply)
+        df['performance'] = pd.cut(
+            df['average_marks'],
+            bins=[0, 75, 90, 100],
+            labels=["Needs Improvement", "Good", "Excellent"]
+        )
 
-    students = pd.read_sql("SELECT * FROM students", conn)
-    scores = pd.read_sql("SELECT * FROM scores", conn)
-    attendance = pd.read_sql("SELECT * FROM attendance", conn)
+        logging.info("✅ Transformation complete")
+        return df
 
-    conn.close()
-
-    return students, scores, attendance
+    except Exception as e:
+        logging.error(f"❌ Error during transformation: {e}")
+        raise
