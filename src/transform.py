@@ -45,7 +45,7 @@ def load_data(df):
     cursor = conn.cursor()
 
     # 🧹 Step 1: Clear existing data (VERY IMPORTANT)
-    cursor.execute("DELETE FROM performance_summary")
+    cursor.execute("TRUNCATE TABLE performance_summary")
 
     # 💾 Step 2: Insert fresh data
     for _, row in df.iterrows():
