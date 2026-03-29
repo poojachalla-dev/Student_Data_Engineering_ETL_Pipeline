@@ -6,6 +6,7 @@ from load import load_data
 
 # ✅ Logging setup (industry standard)
 logging.basicConfig(
+    filename="pipeline.log",   # 👈 log file name
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
