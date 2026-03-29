@@ -2,12 +2,6 @@ import pandas as pd
 import logging
 from db_connection import get_connection
 
-# ✅ Logging setup (industry standard)
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s"
-)
-
 # ---------------------- LOAD ---------------------- #
 def load_data(df):
     """
