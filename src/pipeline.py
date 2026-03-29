@@ -13,16 +13,30 @@ logging.basicConfig(
 def run_pipeline():
     logging.info("🚀 Pipeline started")
 
-    students, scores, attendance = extract_data()
-    logging.info("✅ Data extracted")
+    try:
+        students, scores, attendance = extract_data()
+        logging.info("✅ Data extracted")
+    except Exception as e:
+        logging.error("❌ Extraction failed", exc_info=True)
+        raise
 
-    transformed_df = transform_data(students, scores, attendance)
-    logging.info("✅ Data transformed")
+    try:
+        transformed_df = transform_data(students, scores, attendance)
+        logging.info("✅ Data transformed")
+    except Exception as e:
+        logging.error("❌ Transformation failed", exc_info=True)
+        raise
 
-    load_data(transformed_df)
-    logging.info("✅ Data loaded into database")
+    try:
+        load_data(transformed_df)
+        logging.info("✅ Data loaded into database")
+    except Exception as e:
+        logging.error("❌ Load failed", exc_info=True)
+        raise
 
     logging.info("🎉 Pipeline completed successfully")
 
+
 if __name__ == "__main__":
-    run_pipeline()
+        run_pipeline()
+  
