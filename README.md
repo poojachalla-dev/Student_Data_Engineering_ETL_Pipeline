@@ -127,7 +127,7 @@ student-data-pipeline/
             │
             ▼
    ┌─────────────────┐
-   │  visualize.py   │
+   │visualization.py │
    │  Matplotlib     │
    └─────────────────┘
             │
@@ -151,8 +151,10 @@ student-data-pipeline/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/student-data-pipeline.git
-cd student-data-pipeline
+git clone https://github.com/your-username/Student_Data_Engineering_ETL_Pipeline
+.git
+cd Student_Data_Engineering_ETL_Pipeline
+
 ```
 
 ### 2. Create a Virtual Environment (Recommended)
