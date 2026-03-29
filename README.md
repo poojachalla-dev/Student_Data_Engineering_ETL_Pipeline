@@ -1,1 +1,298 @@
+# 🎓 Data Engineering Pipeline
 
+> **End-to-end data pipeline project** built on the UCI Machine Learning Repository's *Student Alcohol Consumption* dataset. Covers ingestion, SQL storage, transformation, streaming simulation, and analytical visualization — designed as a showcase of real-world data engineering practices.
+
+---
+
+## 📌 Table of Contents
+
+- [Overview](#overview)
+- [Dataset](#dataset)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Pipeline Architecture](#pipeline-architecture)
+- [Setup & Installation](#setup--installation)
+- [Usage](#usage)
+- [Visualizations](#visualizations)
+- [Key Insights](#key-insights)
+- [Future Improvements](#future-improvements)
+- [License](#license)
+
+---
+
+## Overview
+
+This project implements a **complete data pipeline** for student performance and alcohol consumption data sourced from the UCI Machine Learning Repository. The pipeline ingests raw CSV data, loads it into a **MySQL** relational database, applies SQL-based transformations, simulates real-time streaming, and generates analytical plots using **Matplotlib**.
+
+This project demonstrates:
+
+- Raw data ingestion from flat files into a relational database
+- Schema design and normalized SQL table structure
+- Python-driven ETL using `pandas` and `mysql-connector-python`
+- Streaming simulation of row-by-row data arrival
+- Exploratory data analysis (EDA) and visualization
+- Clean, modular project architecture ready for production extension
+
+---
+
+## Dataset
+
+**Source:** [UCI Machine Learning Repository — Student Performance Dataset](https://archive.ics.uci.edu/ml/datasets/Student+Performance)  
+**Also available on:** [Kaggle — Student Alcohol Consumption](https://www.kaggle.com/datasets/uciml/student-alcohol-consumption)
+
+| File | Description |
+|------|-------------|
+| `students.csv` | Demographic and social background of students |
+| `scores.csv` | Academic performance (G1, G2, G3 grades) |
+| `attendance.csv` | Absences and study time records |
+
+---
+
+## Tech Stack
+
+| Tool / Library | Role |
+|----------------|------|
+| **Python 3.13+** | Core scripting and pipeline orchestration |
+| **MySQL** | Relational database for structured storage |
+| **pandas** | Data manipulation and transformation |
+| **mysql-connector-python** | Python ↔ MySQL bridge |
+| **Matplotlib** | Data visualization and chart generation |
+| **Jupyter Notebook** | Exploratory data analysis |
+| **VS Code** | Development environment |
+| **Git & GitHub** | Version control and project hosting |
+| **pip** | Python package management |
+
+---
+
+## Project Structure
+
+```
+student-data-pipeline/
+│
+├── data/
+│   ├── kaggle_dataset_students.csv          # Kaggle source student data
+│   ├── students.csv                         # Raw student demographic data
+│   ├── scores.csv                           # Academic scores (G1, G2, G3)
+│   └── attendance.csv                       # Attendance and study habits
+│
+├── sql/
+│   └── schema.sql            # MySQL table definitions
+│
+├── src/
+│   ├── db_connection.py      # MySQL connection handler
+│   ├── extract.py            # extract data from MYSQL Table
+│   ├── load.py               # load transformed data into MYSQL Table
+│   ├── ingestion.py          # CSV → MySQL ingestion logic
+│   ├── transform.py          # SQL-based transformations & feature engineering
+│   ├── visualize.py          # Matplotlib chart generation
+│   ├── pipeline.py           # Master pipeline orchestrator
+│  
+│
+├── notebooks/
+│   └── analysis.ipynb        # EDA and insights notebook
+│
+├── requirements.txt          # Python dependencies
+└── README.md
+```
+
+---
+
+## Pipeline Architecture
+
+```
+┌──────────────────────────────────────────────────────┐
+│                  RAW DATA (CSV Files)                │
+│         students.csv / scores.csv / attendance.csv   │
+└─────────────────────────┬────────────────────────────┘
+                          │
+                          ▼
+              ┌───────────────────────┐
+              │    ingestion.py        │
+              │  pandas → MySQL load  │
+              └───────────┬───────────┘
+                          │
+                          ▼
+              ┌───────────────────────┐
+              │   MySQL Database       │
+              │  (schema via sql/)    │
+              └───────────┬───────────┘
+                          │
+              ┌───────────┴───────────┐
+              │                       │
+              ▼                       ▼
+   ┌─────────────────┐    ┌────────────────────────┐
+   │  transform.py   │    │  streaming_simulation.py│
+   │  SQL transforms │    │  Real-time row feed     │
+   └────────┬────────┘    └────────────────────────┘
+            │
+            ▼
+   ┌─────────────────┐
+   │  visualize.py   │
+   │  Matplotlib     │
+   └─────────────────┘
+            │
+            ▼
+   ┌─────────────────┐
+   │ analysis.ipynb  │
+   │  EDA + Insights │
+   └─────────────────┘
+```
+
+---
+
+## Setup & Installation
+
+### Prerequisites
+
+- Python 3.10+
+- MySQL Server running locally (or remotely)
+- Git
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/your-username/student-data-pipeline.git
+cd student-data-pipeline
+```
+
+### 2. Create a Virtual Environment (Recommended)
+
+```bash
+python -m venv venv
+source venv/bin/activate        # macOS/Linux
+venv\Scripts\activate           # Windows
+```
+
+### 3. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+**`requirements.txt` includes:**
+
+```
+pandas
+mysql-connector-python
+matplotlib
+notebook
+```
+
+### 4. Configure MySQL
+
+Start your MySQL server, then create the database:
+
+```sql
+CREATE DATABASE student_pipeline;
+```
+
+Update your credentials in `src/db_connection.py`:
+
+```python
+config = {
+    "host": "localhost",
+    "user": "your_mysql_user",
+    "password": "your_password",
+    "database": "student_pipeline"
+}
+```
+
+### 5. Create Tables
+
+```bash
+mysql -u your_user -p student_pipeline < sql/schema.sql
+```
+
+---
+
+## Usage
+
+### Run the Full Pipeline
+
+```bash
+python src/pipeline.py
+```
+
+This will:
+1. Connect to MySQL
+2. Ingest all CSV files into their respective tables
+3. Apply transformations (feature engineering, joins, aggregations)
+4. Generate visualizations and save them to `/outputs/`
+5. Log all activity to `pipeline.log`
+
+### Run Individual Modules
+
+```bash
+# Ingest data only
+python src/ingestion.py
+
+# Run transformations only
+python src/transform.py
+
+# Generate visualizations only
+python src/visualize.py
+
+# Run streaming simulation
+python src/streaming_simulation.py
+```
+
+### Launch the Notebook
+
+```bash
+jupyter notebook notebooks/analysis.ipynb
+```
+
+---
+
+## Visualizations
+
+The `visualize.py` module generates the following plots using **Matplotlib**:
+
+| Chart | Description |
+|-------|-------------|
+| **Alcohol vs Final Grade** | Scatter/boxplot of G3 grade against alcohol consumption levels |
+| **Weekday vs Weekend Drinking** | Comparative bar chart of `Dalc` vs `Walc` |
+| **Grade Distribution** | Histogram of G1, G2, G3 score distributions |
+| **Absence Impact** | Line/scatter showing absences vs academic performance |
+| **Correlation Heatmap** | Pairwise feature correlation matrix |
+
+---
+
+## Key Insights
+
+- Students with **higher weekday alcohol consumption (Dalc ≥ 4)** show a statistically notable drop in final grades (G3).
+- **Weekend drinking (Walc)** shows a weaker but still negative correlation with performance.
+- **Study time** is the single strongest positive predictor of G3 across the dataset.
+- **Absences** compound the effect of alcohol consumption — high Dalc + high absences produces the lowest median G3.
+- Female students in the dataset reported lower alcohol consumption but showed similar grade variance to male counterparts.
+
+> Full analysis available in [`notebooks/analysis.ipynb`](notebooks/analysis.ipynb)
+
+---
+
+## Future Improvements
+
+- [ ] Migrate to **PostgreSQL** for production-scale storage
+- [ ] Add **Apache Airflow** for scheduled pipeline orchestration
+- [ ] Build a **Streamlit dashboard** for interactive EDA
+- [ ] Integrate **Docker** for containerized deployment
+- [ ] Add **unit tests** with `pytest` for each pipeline stage
+- [ ] Connect to **Kaggle API** for automated dataset refresh
+
+---
+
+## Author
+
+**Your Name**  
+📧 your.email@example.com  
+🔗 [LinkedIn](https://linkedin.com/in/your-profile) | [GitHub](https://github.com/your-username) | [Portfolio](https://yourportfolio.com)
+
+---
+
+## License
+
+Dataset credit: [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/datasets/Student+Performance) — P. Cortez and A. Silva, 2008.
+
+---
+
+> *Built as a portfolio project to demonstrate end-to-end data engineering skills across ingestion, storage, transformation, streaming, and visualization.*
