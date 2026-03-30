@@ -187,7 +187,7 @@ student-data-pipeline/
 
 ---
 
-# Setup & Installation
+### Setup & Installation
 
 ### Prerequisites
 
@@ -195,7 +195,7 @@ student-data-pipeline/
 - MySQL Server running locally (or remotely)
 - Git
 
-### 1. Clone the Repository
+### 1. Clone the Repository 
 
 ```bash
 git clone https://github.com/your-username/Student_Data_Engineering_ETL_Pipeline
@@ -208,7 +208,7 @@ cd Student_Data_Engineering_ETL_Pipeline
 
 python -m venv venv
 
-# Activate (Windows)
+### Activate (Windows)
 venv\Scripts\activate
 
 
