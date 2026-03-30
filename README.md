@@ -1,4 +1,4 @@
-# 🎓 Data Engineering Pipeline
+# 🎓 Student Data Engineering Pipeline
 
 > **End-to-end data pipeline project** built on the UCI Machine Learning Repository's *Student Alcohol Consumption* dataset. Covers ingestion, SQL storage, transformation, streaming simulation, and analytical visualization — designed as a showcase of real-world data engineering practices.
 
@@ -22,9 +22,9 @@
 
 ## Overview
 
-This project implements a **complete data pipeline** for student performance and alcohol consumption data sourced from the UCI Machine Learning Repository. The pipeline ingests raw CSV data, loads it into a **MySQL** relational database, applies SQL-based transformations, simulates real-time streaming, and generates analytical plots using **Matplotlib**.
+This project implements a **complete data pipeline** for student performance data sourced from the UCI Machine Learning Repository. The pipeline ingests raw CSV data, loads it into a **MySQL** relational database, applies SQL-based transformations, simulates real-time streaming, and generates analytical plots using **Matplotlib** and **Seaborn**.
 
-This project demonstrates:
+**This project demonstrates**:
 
 - Raw data ingestion from flat files into a relational database
 - Schema design and normalized SQL table structure
@@ -57,6 +57,7 @@ This project demonstrates:
 | **pandas** | Data manipulation and transformation |
 | **mysql-connector-python** | Python ↔ MySQL bridge |
 | **Matplotlib** | Data visualization and chart generation |
+| **Seaborn** |  Advanced statistical visualizations like correlation heatmap relationships between attendance and academic performance |
 | **Jupyter Notebook** | Exploratory data analysis |
 | **VS Code** | Development environment |
 | **Git & GitHub** | Version control and project hosting |
@@ -76,7 +77,7 @@ student-data-pipeline/
 │   └── attendance.csv                       # Attendance and study habits
 │
 ├── sql/
-│   └── schema.sql            # MySQL table definitions
+│   └── create_database.sql            # MySQL table creations
 │
 ├── src/
 │   ├── db_connection.py      # MySQL connection handler
@@ -87,6 +88,13 @@ student-data-pipeline/
 │   ├── visualize.py          # Matplotlib chart generation
 │   ├── pipeline.py           # Master pipeline orchestrator
 │  
+├── outputs/
+│   └──Attendance_distribution.png
+│   └──Average_Marks_distribution.png
+│   └──Correlation_Heatmap.png
+│   └──Improvement_Statistics.png
+│   └──Performance_distribution.png
+│   └──TOP_10_Students.png
 │
 ├── notebooks/
 │   └── analysis.ipynb        # EDA and insights notebook
@@ -100,42 +108,85 @@ student-data-pipeline/
 ## Pipeline Architecture
 
 ```
-┌──────────────────────────────────────────────────────┐
-│                  RAW DATA (CSV Files)                │
-│         students.csv / scores.csv / attendance.csv   │
-└─────────────────────────┬────────────────────────────┘
-                          │
-                          ▼
-              ┌───────────────────────┐
-              │    ingestion.py        │
-              │  pandas → MySQL load  │
-              └───────────┬───────────┘
-                          │
-                          ▼
-              ┌───────────────────────┐
-              │   MySQL Database       │
-              │  (schema via sql/)    │
-              └───────────┬───────────┘
-                          │
-              ┌───────────┴───────────┐
-              │                       │
-              ▼                       ▼
-   ┌─────────────────┐    ┌────────────────────────┐
-   │  transform.py   │    │  streaming_simulation.py│
-   │  SQL transforms │    │  Real-time row feed     │
-   └────────┬────────┘    └────────────────────────┘
-            │
-            ▼
-   ┌─────────────────┐
-   │visualization.py │
-   │  Matplotlib     │
-   └─────────────────┘
-            │
-            ▼
-   ┌─────────────────┐
-   │ analysis.ipynb  │
-   │  EDA + Insights │
-   └─────────────────┘
+## 🏗️ Pipeline Architecture
+
+```
+                ┌────────────────────────────┐
+                │        Source Layer        │
+                │  (MySQL Database Tables)  │
+                │                            │
+                │  • students                │
+                │  • scores                  │
+                │  • attendance              │
+                └────────────┬───────────────┘
+                             │
+                             ▼
+                ┌────────────────────────────┐
+                │       Extract Layer        │
+                │      (extract.py)          │
+                │                            │
+                │  • Read tables using SQL   │
+                │  • Load into Pandas DF     │
+                └────────────┬───────────────┘
+                             │
+                             ▼
+                ┌────────────────────────────┐
+                │      Transform Layer       │
+                │     (transform.py)         │
+                │                            │
+                │  • Merge datasets          │
+                │  • Feature Engineering     │
+                │    - average_marks         │
+                │    - attendance_percentage│
+                │    - performance           │
+                │    - improvement           │
+                │    - attendance_bucket     │
+                │                            │
+                │  • Create Aggregations     │
+                │    - performance_dist      │
+                │    - attendance_dist       │
+                │    - top_students          │
+                │    - correlation_matrix    │
+                └────────────┬───────────────┘
+                             │
+                             ▼
+                ┌────────────────────────────┐
+                │        Load Layer          │
+                │        (load.py)           │
+                │                            │
+                │  • Create tables           │
+                │  • Truncate old data       │
+                │  • Insert new data         │
+                │                            │
+                │  Tables Created:           │
+                │  • performance_summary     │
+                │  • performance_distribution│
+                │  • attendance_distribution │
+                │  • top_students            │
+                │  • improvement_stats       │
+                │  • correlation_matrix      │
+                └────────────┬───────────────┘
+                             │
+                             ▼
+                ┌────────────────────────────┐
+                │   Visualization Layer      │
+                │   (visualization.py)       │
+                │                            │
+                │  • Histograms              │
+                │  • Bar Charts              │
+                │  • Scatter Plots           │
+                │  • Heatmaps (Seaborn)      │
+                └────────────┬───────────────┘
+                             │
+                             ▼
+                ┌────────────────────────────┐
+                │       Insight Layer        │
+                │                            │
+                │  • Performance trends      │
+                │  • Attendance impact       │
+                │  • Top performers          │
+                │  • Correlation analysis    │
+                └────────────────────────────┘
 ```
 
 ---
@@ -159,11 +210,12 @@ cd Student_Data_Engineering_ETL_Pipeline
 
 ### 2. Create a Virtual Environment (Recommended)
 
-```bash
+# Create virtual environment
 python -m venv venv
-source venv/bin/activate        # macOS/Linux
-venv\Scripts\activate           # Windows
-```
+
+# Activate (Windows)
+venv\Scripts\activate
+
 
 ### 3. Install Dependencies
 
@@ -228,14 +280,18 @@ This will:
 # Ingest data only
 python src/ingestion.py
 
+# Run Extract only
+python src/extract.py
+
 # Run transformations only
 python src/transform.py
 
-# Generate visualizations only
-python src/visualize.py
+# Run Load only
+python src/load.py
 
-# Run streaming simulation
-python src/streaming_simulation.py
+# Generate visualizations only
+python src/run_visualization.py
+
 ```
 
 ### Launch the Notebook
@@ -243,30 +299,16 @@ python src/streaming_simulation.py
 ```bash
 jupyter notebook notebooks/analysis.ipynb
 ```
-
----
-
-## Visualizations
-
-The `visualize.py` module generates the following plots using **Matplotlib**:
-
-| Chart | Description |
-|-------|-------------|
-| **Alcohol vs Final Grade** | Scatter/boxplot of G3 grade against alcohol consumption levels |
-| **Weekday vs Weekend Drinking** | Comparative bar chart of `Dalc` vs `Walc` |
-| **Grade Distribution** | Histogram of G1, G2, G3 score distributions |
-| **Absence Impact** | Line/scatter showing absences vs academic performance |
-| **Correlation Heatmap** | Pairwise feature correlation matrix |
-
 ---
 
 ## Key Insights
-
-- Students with **higher weekday alcohol consumption (Dalc ≥ 4)** show a statistically notable drop in final grades (G3).
-- **Weekend drinking (Walc)** shows a weaker but still negative correlation with performance.
-- **Study time** is the single strongest positive predictor of G3 across the dataset.
-- **Absences** compound the effect of alcohol consumption — high Dalc + high absences produces the lowest median G3.
-- Female students in the dataset reported lower alcohol consumption but showed similar grade variance to male counterparts.
+-- The majority of students perform at an average level, with fewer students in the “Excellent” and “Needs Improvement” categories, indicating a moderate overall academic performance.
+-- Student scores are concentrated within a mid-range band, suggesting consistent performance with limited extreme high or low outliers.
+-- Students with higher attendance percentages tend to achieve better average marks, indicating a positive relationship between attendance and academic performance.
+-- Early academic performance (G1, G2) is a strong predictor of final grades (G3), while increased absences negatively impact student performance.
+Most students fall into the medium-to-high attendance category, with a smaller group exhibiting low attendance, which may require intervention.
+-- Top-performing students consistently maintain high average marks, indicating stable academic performance across all grading periods.
+-- While some students show positive improvement over time, others decline, highlighting the need for continuous performance monitoring and support.
 
 > Full analysis available in [`notebooks/analysis.ipynb`](notebooks/analysis.ipynb)
 
@@ -285,10 +327,9 @@ The `visualize.py` module generates the following plots using **Matplotlib**:
 
 ## Author
 
-**Your Name**  
-📧 your.email@example.com  
-🔗 [LinkedIn](https://linkedin.com/in/your-profile) | [GitHub](https://github.com/your-username) | [Portfolio](https://yourportfolio.com)
-
+**Pooja Challa**  
+ 
+🔗 [LinkedIn](www.linkedin.com/in/poojachalla) | [GitHub](https://github.com/poojachalla-dev) | 
 ---
 
 ## License
