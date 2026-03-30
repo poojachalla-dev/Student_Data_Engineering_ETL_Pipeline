@@ -187,6 +187,7 @@ student-data-pipeline/
 
 ---
 
+```
 ### Setup & Installation
 
 ### Prerequisites
