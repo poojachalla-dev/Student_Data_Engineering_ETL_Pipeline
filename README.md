@@ -184,6 +184,7 @@ student-data-pipeline/
                 │  • Correlation analysis    │
                 └────────────────────────────┘
 ```
+---
 ```
 ### Setup & Installation
 
