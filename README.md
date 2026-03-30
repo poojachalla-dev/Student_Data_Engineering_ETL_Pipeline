@@ -109,7 +109,7 @@ student-data-pipeline/
 
                 ┌────────────────────────────┐
                 │        Source Layer        │
-                │  (MySQL Database Tables)  │
+                │  (MySQL Database Tables)   │
                 │                            │
                 │  • students                │
                 │  • scores                  │
@@ -133,7 +133,7 @@ student-data-pipeline/
                 │  • Merge datasets          │
                 │  • Feature Engineering     │
                 │    - average_marks         │
-                │    - attendance_percentage│
+                │    - attendance_percentage │
                 │    - performance           │
                 │    - improvement           │
                 │    - attendance_bucket     │
@@ -187,7 +187,7 @@ student-data-pipeline/
 
 ---
 
-## Setup & Installation
+# Setup & Installation
 
 ### Prerequisites
 
@@ -206,7 +206,6 @@ cd Student_Data_Engineering_ETL_Pipeline
 
 ### 2. Create a Virtual Environment (Recommended)
 
-# Create virtual environment
 python -m venv venv
 
 # Activate (Windows)
@@ -299,11 +298,17 @@ jupyter notebook notebooks/analysis.ipynb
 
 ## Key Insights
 -- The majority of students perform at an average level, with fewer students in the “Excellent” and “Needs Improvement” categories, indicating a moderate overall academic performance.
+
 -- Student scores are concentrated within a mid-range band, suggesting consistent performance with limited extreme high or low outliers.
+
 -- Students with higher attendance percentages tend to achieve better average marks, indicating a positive relationship between attendance and academic performance.
+
 -- Early academic performance (G1, G2) is a strong predictor of final grades (G3), while increased absences negatively impact student performance.
+
 Most students fall into the medium-to-high attendance category, with a smaller group exhibiting low attendance, which may require intervention.
+
 -- Top-performing students consistently maintain high average marks, indicating stable academic performance across all grading periods.
+
 -- While some students show positive improvement over time, others decline, highlighting the need for continuous performance monitoring and support.
 
 > Full analysis available in [`notebooks/analysis.ipynb`](notebooks/analysis.ipynb)
