@@ -107,10 +107,6 @@ student-data-pipeline/
 
 ## Pipeline Architecture
 
-```
-## 🏗️ Pipeline Architecture
-
-```
                 ┌────────────────────────────┐
                 │        Source Layer        │
                 │  (MySQL Database Tables)  │
