@@ -2,7 +2,7 @@ import pandas as pd
 import logging
 from db_connection import get_connection
 
-# ---------------------- EXTRACT ---------------------- #
+
 def extract_data():
     """
     Extract data from students, scores, and attendance tables.
@@ -16,7 +16,20 @@ def extract_data():
         scores = pd.read_sql("SELECT * FROM scores", conn)
         attendance = pd.read_sql("SELECT * FROM attendance", conn)
 
-        logging.info("✅ Data extraction successful")
+        # ✅ Validation: check empty tables
+        if students.empty:
+            raise ValueError("students table is empty")
+        if scores.empty:
+            raise ValueError("scores table is empty")
+        if attendance.empty:
+            raise ValueError("attendance table is empty")
+
+        # ✅ Logging row counts (VERY important in real pipelines)
+        logging.info(
+            f"✅ Extracted rows → students: {len(students)}, "
+            f"scores: {len(scores)}, attendance: {len(attendance)}"
+        )
+
         return students, scores, attendance
 
     except Exception as e:
