@@ -13,7 +13,6 @@
 - [Pipeline Architecture](#pipeline-architecture)
 - [Setup & Installation](#setup--installation)
 - [Usage](#usage)
-- [Visualizations](#visualizations)
 - [Key Insights](#key-insights)
 - [Future Improvements](#future-improvements)
 - [License](#license)
