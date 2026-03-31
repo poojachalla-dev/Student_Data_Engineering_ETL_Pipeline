@@ -183,10 +183,8 @@ student-data-pipeline/
                 │  • Top performers          │
                 │  • Correlation analysis    │
                 └────────────────────────────┘
-```
----
-```
-### Setup & Installation
+
+## Setup & Installation
 
 ### Prerequisites
 
